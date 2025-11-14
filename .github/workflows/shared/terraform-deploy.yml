@@ -1,0 +1,84 @@
+name: Reusable Terraform Deploy
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      aws-region:
+        required: true
+        type: string
+      backend-image:
+        required: true
+        type: string
+      terraform-action:
+        required: false
+        type: string
+        default: apply
+    secrets:
+      aws-role-arn:
+        required: true
+      db-password:
+        required: true
+      github-access-token:
+        required: true
+      certificate-arn:
+        required: true
+      alarm-email:
+        required: true
+
+jobs:
+  terraform:
+    name: Terraform ${{ inputs.terraform-action }}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.aws-role-arn }}
+          aws-region: ${{ inputs.aws-region }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.0
+
+      - name: Terraform Init
+        working-directory: ./deployment/terraform
+        run: terraform init
+
+      - name: Terraform Validate
+        working-directory: ./deployment/terraform
+        run: terraform validate
+
+      - name: Terraform Plan
+        working-directory: ./deployment/terraform
+        run: |
+          terraform plan \
+            -var="environment=${{ inputs.environment }}" \
+            -var="aws_region=${{ inputs.aws-region }}" \
+            -var="backend_image=${{ inputs.backend-image }}" \
+            -var="db_password=${{ secrets.db-password }}" \
+            -var="github_access_token=${{ secrets.github-access-token }}" \
+            -var="certificate_arn=${{ secrets.certificate-arn }}" \
+            -var="alarm_email=${{ secrets.alarm-email }}" \
+            -out=tfplan
+
+      - name: Terraform Apply
+        if: inputs.terraform-action == 'apply'
+        working-directory: ./deployment/terraform
+        run: terraform apply -auto-approve tfplan
+
+      - name: Terraform Output
+        if: inputs.terraform-action == 'apply'
+        working-directory: ./deployment/terraform
+        run: terraform output
+
