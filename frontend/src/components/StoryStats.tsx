@@ -80,10 +80,6 @@ export function StoryStats() {
           transition={{ duration: 0.8 }}
           className="text-center mb-10 md:mb-12"
         >
-          <div className="inline-flex items-center justify-center w-14 h-14 mb-4 rounded-2xl bg-gradient-to-br from-primary-100 to-secondary-100">
-            <Activity size={32} className="text-primary-600" />
-          </div>
-
           <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4 leading-tight">
             From{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-600">
