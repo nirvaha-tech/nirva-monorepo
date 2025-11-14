@@ -1,0 +1,40 @@
+# Include documentation
+include README.md
+include LICENSE
+include CHANGELOG.md
+include MIGRATIONS.md
+include NEON_DATABASE_CONFIG.md
+
+# Include configuration files
+include requirements.txt
+include requirements-dev.txt
+include pyproject.toml
+include setup.py
+include setup.cfg
+
+# Include alembic configuration
+include alembic.ini
+recursive-include alembic *.py
+recursive-include alembic *.mako
+
+# Include type stubs
+recursive-include app py.typed *.pyi
+
+# Exclude unnecessary files
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude *.pyd
+global-exclude __pycache__
+global-exclude .DS_Store
+global-exclude *.so
+global-exclude .venv
+global-exclude venv
+global-exclude .env
+global-exclude .env.*
+
+# Exclude tests from distribution
+prune tests
+prune docs
+prune scripts
+prune .github
+
