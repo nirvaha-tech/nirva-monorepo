@@ -16,36 +16,44 @@ Enterprise-grade FastAPI backend for DevOps and Cloud Infrastructure lead manage
 ## 📋 Requirements
 
 - Python 3.11+
+- Poetry 1.5+ (for dependency management)
 - PostgreSQL 14+ (or Neon PostgreSQL)
-- Virtual environment (venv/virtualenv)
 
 ## 🛠️ Installation
 
-### 1. Clone the repository
+### 1. Install Poetry
+
+If you don't have Poetry installed:
+
+```bash
+# macOS/Linux/WSL
+curl -sSL https://install.python-poetry.org | python3 -
+
+# Or with pip (not recommended)
+pip install poetry
+
+# Or with Homebrew (macOS)
+brew install poetry
+```
+
+### 2. Clone the repository
 
 ```bash
 git clone https://github.com/nirvaha-tech/nirva-monorepo.git
 cd nirva-monorepo/backend
 ```
 
-### 2. Create and activate virtual environment
-
-```bash
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-```
-
 ### 3. Install dependencies
 
 ```bash
-# Production dependencies
-pip install -r requirements.txt
+# Install all dependencies (including dev)
+poetry install
 
-# Development dependencies (optional)
-pip install -r requirements-dev.txt
+# Or install only production dependencies
+poetry install --only main
 
-# Or install in editable mode
-pip install -e .
+# Activate the virtual environment
+poetry shell
 ```
 
 ### 4. Configure environment variables
@@ -78,8 +86,11 @@ POSTGRES_PORT=5432
 # Using the convenience script
 ./migrate.sh local
 
-# Or manually with alembic
-alembic upgrade head
+# Or using Make
+make migrate
+
+# Or manually with Poetry
+poetry run alembic upgrade head
 ```
 
 ## 🚦 Running the Application
@@ -87,13 +98,21 @@ alembic upgrade head
 ### Development Mode
 
 ```bash
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+# Using Make (recommended)
+make run
+
+# Or with Poetry directly
+poetry run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### Production Mode
 
 ```bash
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+# Using Make
+make run-prod
+
+# Or with Poetry
+poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
 ```
 
 ### Using Docker
@@ -115,19 +134,33 @@ Once the server is running, access:
 ### Run all tests
 
 ```bash
-pytest
+# Using Make
+make test
+
+# Or with Poetry
+poetry run pytest
 ```
 
 ### Run with coverage
 
 ```bash
-pytest --cov=app --cov-report=html
+# Using Make
+make test
+
+# Or with Poetry
+poetry run pytest --cov=app --cov-report=html
+```
+
+### Run tests without coverage (faster)
+
+```bash
+make test-fast
 ```
 
 ### Run specific test file
 
 ```bash
-pytest tests/test_leads.py
+poetry run pytest tests/test_leads.py
 ```
 
 ## 🗄️ Database Management
@@ -135,31 +168,41 @@ pytest tests/test_leads.py
 ### Check database schema
 
 ```bash
-python check_db_schema.py
+make db-check
+# or
+poetry run python check_db_schema.py
 ```
 
 ### Test database connection
 
 ```bash
-python test_db_insert.py
+make db-test
+# or
+poetry run python test_db_insert.py
 ```
 
 ### Create migration
 
 ```bash
-alembic revision --autogenerate -m "description of changes"
+make migration msg="description of changes"
+# or
+poetry run alembic revision --autogenerate -m "description of changes"
 ```
 
 ### Apply migrations
 
 ```bash
-alembic upgrade head
+make migrate
+# or
+poetry run alembic upgrade head
 ```
 
 ### Rollback migration
 
 ```bash
-alembic downgrade -1
+make migrate-down
+# or
+poetry run alembic downgrade -1
 ```
 
 ## 📁 Project Structure
@@ -256,30 +299,65 @@ curl -X POST http://localhost:8000/api/v1/leads \
 
 ## 🛠️ Development
 
+### Adding Dependencies
+
+```bash
+# Add a production dependency
+poetry add <package-name>
+
+# Add a development dependency
+poetry add -G dev <package-name>
+
+# Remove a dependency
+poetry remove <package-name>
+
+# Update dependencies
+poetry update
+```
+
 ### Code Formatting
 
 ```bash
-# Format code with Black
-black app/
+# Format code with Black and isort
+make format
 
-# Sort imports with isort
-isort app/
+# Or manually
+poetry run black app/
+poetry run isort app/
 
-# Check code quality with flake8
-flake8 app/
+# Check formatting without changing files
+make format-check
+```
+
+### Code Quality
+
+```bash
+# Run linters
+make lint
+
+# Run security checks
+make security
+
+# Run all pre-commit hooks
+make pre-commit
 ```
 
 ### Type Checking
 
 ```bash
-mypy app/
+poetry run mypy app/
 ```
 
 ### Pre-commit Hooks
 
 ```bash
-pre-commit install
-pre-commit run --all-files
+# Install hooks
+make pre-commit-install
+# or
+poetry run pre-commit install
+
+# Run all hooks
+make pre-commit
 ```
 
 ## 📝 Environment Variables

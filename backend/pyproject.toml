@@ -1,20 +1,14 @@
-[build-system]
-requires = ["setuptools>=68.0", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[project]
+[tool.poetry]
 name = "nirvahatech-backend"
 version = "1.0.0"
 description = "Enterprise-grade DevOps and Cloud Infrastructure Backend API"
+authors = ["Nirvahatech Engineering Team <engineering@nirvahatech.com>"]
+maintainers = ["Nirvahatech DevOps <devops@nirvahatech.com>"]
+license = "Proprietary"
 readme = "README.md"
-requires-python = ">=3.11"
-license = {text = "Proprietary"}
-authors = [
-    {name = "Nirvahatech Engineering Team", email = "engineering@nirvahatech.com"}
-]
-maintainers = [
-    {name = "Nirvahatech DevOps", email = "devops@nirvahatech.com"}
-]
+homepage = "https://nirvahatech.com"
+repository = "https://github.com/nirvaha-tech/nirva-monorepo"
+documentation = "https://docs.nirvahatech.com"
 keywords = [
     "fastapi",
     "api",
@@ -38,62 +32,54 @@ classifiers = [
     "Operating System :: OS Independent",
     "Typing :: Typed",
 ]
+packages = [{include = "app"}]
 
-dependencies = [
-    "fastapi==0.109.0",
-    "uvicorn[standard]==0.27.0",
-    "pydantic==2.6.0",
-    "pydantic-settings==2.1.0",
-    "sqlalchemy==2.0.25",
-    "asyncpg==0.29.0",
-    "alembic==1.13.1",
-    "greenlet==3.2.4",
-    "python-dotenv==1.0.0",
-    "email-validator==2.1.0",
-    "psycopg2-binary==2.9.11",
-]
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "0.109.0"
+uvicorn = {extras = ["standard"], version = "0.27.0"}
+pydantic = "2.6.0"
+pydantic-settings = "2.1.0"
+sqlalchemy = "2.0.25"
+asyncpg = "0.29.0"
+alembic = "1.13.1"
+greenlet = "3.2.4"
+python-dotenv = "1.0.0"
+email-validator = "^2.1.1"
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=7.4.0",
-    "pytest-asyncio>=0.21.0",
-    "pytest-cov>=4.1.0",
-    "black>=23.0.0",
-    "flake8>=6.0.0",
-    "mypy>=1.4.0",
-    "isort>=5.12.0",
-    "pre-commit>=3.3.0",
-    "httpx>=0.24.0",
-]
-test = [
-    "pytest>=7.4.0",
-    "pytest-asyncio>=0.21.0",
-    "pytest-cov>=4.1.0",
-    "httpx>=0.24.0",
-    "faker>=18.0.0",
-]
-docs = [
-    "mkdocs>=1.5.0",
-    "mkdocs-material>=9.1.0",
-    "mkdocstrings[python]>=0.22.0",
-]
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+pytest-asyncio = "^0.21.0"
+pytest-cov = "^4.1.0"
+black = "^23.0.0"
+flake8 = "^6.0.0"
+mypy = "^1.4.0"
+isort = "^5.12.0"
+pre-commit = "^3.3.0"
+httpx = "^0.24.0"
+bandit = "^1.7.5"
+safety = "^2.3.0"
+ipython = "^8.14.0"
+ipdb = "^0.13.13"
 
-[project.urls]
-Homepage = "https://nirvahatech.com"
-Documentation = "https://docs.nirvahatech.com"
-Repository = "https://github.com/nirvaha-tech/nirva-monorepo"
-Issues = "https://github.com/nirvaha-tech/nirva-monorepo/issues"
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.0"
+pytest-asyncio = "^0.21.0"
+pytest-cov = "^4.1.0"
+httpx = "^0.24.0"
+faker = "^18.0.0"
 
-[project.scripts]
+[tool.poetry.group.docs.dependencies]
+mkdocs = "^1.5.0"
+mkdocs-material = "^9.1.0"
+mkdocstrings = {extras = ["python"], version = "^0.22.0"}
+
+[tool.poetry.scripts]
 nirvahatech-api = "app.main:main"
 
-[tool.setuptools]
-package-dir = {"" = "."}
-
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["app*"]
-exclude = ["tests*", "docs*", "scripts*", "*.backup"]
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 line-length = 100
@@ -183,17 +169,6 @@ exclude_lines = [
     "pass",
 ]
 
-[tool.flake8]
-max-line-length = 100
-extend-ignore = ["E203", "E266", "E501", "W503"]
-exclude = [
-    ".git",
-    "__pycache__",
-    ".venv",
-    "venv",
-    "alembic/versions",
-    "build",
-    "dist",
-]
-max-complexity = 10
-
+[tool.bandit]
+exclude_dirs = ["tests", "alembic/versions"]
+skips = ["B101", "B601"]
