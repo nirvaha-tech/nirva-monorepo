@@ -61,6 +61,7 @@ terraform.rc
 *.swo
 *~
 .DS_Store
+.history/
 
 # Logs
 logs/
