@@ -1,0 +1,323 @@
+# Nirvahatech Landing Page
+
+A modern, full-stack landing page for Nirvahatech's DevOps and cloud infrastructure services. Built with Next.js 15, FastAPI, and PostgreSQL.
+
+## 🚀 Quick Deploy
+
+### Deploy to Vercel (Fastest - 5 minutes)
+
+```bash
+# Deploy using the quick script
+./deploy-to-vercel.sh
+```
+
+Or follow the [Quick Deploy Guide](QUICK_DEPLOY_VERCEL.md) for detailed instructions.
+
+**Recommended stack:**
+- Frontend: Vercel (Free tier)
+- Backend: Railway.app (Free tier)
+- Database: Railway PostgreSQL (Free tier)
+
+### Deploy to AWS (Production - SOC2 Compliant)
+
+For enterprise production deployment with full compliance, see [AWS Deployment](#-aws-deployment) section below.
+
+## 🏗️ Architecture
+
+- **Frontend**: Next.js 15 (React 19) with TypeScript and TailwindCSS
+- **Backend**: FastAPI (Python) with async SQLAlchemy
+- **Database**: PostgreSQL 16
+- **Deployment Options**:
+  - **Option 1**: Vercel + Railway (Quick, Free tier available)
+  - **Option 2**: AWS (ECS Fargate, RDS, Amplify, ALB, WAF) - Enterprise grade
+- **IaC**: Terraform modules (AWS)
+- **CI/CD**: GitHub Actions
+
+## 📁 Project Structure
+
+```
+.
+├── frontend/                 # Next.js 15 application
+│   ├── src/
+│   │   ├── app/             # App Router pages
+│   │   └── components/      # React components
+│   ├── Dockerfile
+│   └── package.json
+├── backend/                  # FastAPI application
+│   ├── app/
+│   │   ├── api/             # API endpoints
+│   │   ├── models/          # SQLAlchemy models
+│   │   ├── schemas/         # Pydantic schemas
+│   │   └── core/            # Configuration
+│   ├── alembic/             # Database migrations
+│   ├── Dockerfile
+│   └── requirements.txt
+├── deployment/
+│   └── terraform/           # Terraform infrastructure
+│       ├── modules/         # Reusable modules
+│       │   ├── networking/  # VPC, subnets, NAT
+│       │   ├── security/    # Security groups
+│       │   ├── rds/         # PostgreSQL database
+│       │   ├── ecs/         # ECS Fargate cluster
+│       │   ├── amplify/     # Frontend hosting
+│       │   ├── monitoring/  # CloudWatch alarms
+│       │   └── waf/         # Web Application Firewall
+│       ├── main.tf
+│       ├── variables.tf
+│       └── outputs.tf
+├── .github/
+│   └── workflows/           # CI/CD pipelines
+│       ├── ci.yml           # Linting and tests
+│       ├── cd-production.yml # Production deployment
+│       └── shared/          # Reusable workflows
+├── docker-compose.yml       # Local development
+└── README.md
+```
+
+## 🚀 Local Development
+
+### Prerequisites
+
+- Docker and Docker Compose
+- Node.js 20+
+- Python 3.11+
+- PostgreSQL (or use Docker)
+
+### Quick Start with Docker Compose
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/YOUR_ORG/nirvahatech.git
+   cd nirvahatech
+   ```
+
+2. **Start all services**
+   ```bash
+   docker-compose up -d
+   ```
+
+3. **Access the application**
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:8000
+   - API Docs: http://localhost:8000/docs
+
+### Frontend Development
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The frontend will be available at http://localhost:3000.
+
+### Backend Development
+
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+The backend will be available at http://localhost:8000.
+
+### Database Migrations
+
+```bash
+cd backend
+
+# Create a new migration
+alembic revision --autogenerate -m "Description of changes"
+
+# Apply migrations
+alembic upgrade head
+
+# Rollback
+alembic downgrade -1
+```
+
+## 🌐 AWS Deployment
+
+### Prerequisites
+
+1. AWS Account with appropriate permissions
+2. Terraform installed (>= 1.5.0)
+3. AWS CLI configured
+4. GitHub repository with Actions enabled
+5. ACM certificate for HTTPS
+
+### Setup AWS Infrastructure
+
+1. **Create S3 bucket for Terraform state**
+   ```bash
+   aws s3api create-bucket \
+     --bucket nirvahatech-terraform-state \
+     --region us-east-1
+
+   aws s3api put-bucket-versioning \
+     --bucket nirvahatech-terraform-state \
+     --versioning-configuration Status=Enabled
+   ```
+
+2. **Create DynamoDB table for state locking**
+   ```bash
+   aws dynamodb create-table \
+     --table-name nirvahatech-terraform-locks \
+     --attribute-definitions AttributeName=LockID,AttributeType=S \
+     --key-schema AttributeName=LockID,KeyType=HASH \
+     --billing-mode PAY_PER_REQUEST \
+     --region us-east-1
+   ```
+
+3. **Create ECR repositories**
+   ```bash
+   aws ecr create-repository \
+     --repository-name nirvahatech-backend \
+     --region us-east-1
+   ```
+
+4. **Configure Terraform variables**
+   ```bash
+   cd deployment/terraform
+   cp terraform.tfvars.example terraform.tfvars
+   # Edit terraform.tfvars with your values
+   ```
+
+5. **Deploy infrastructure**
+   ```bash
+   terraform init
+   terraform plan
+   terraform apply
+   ```
+
+### GitHub Actions Secrets
+
+Configure these secrets in your GitHub repository:
+
+- `AWS_ROLE_ARN`: IAM role for GitHub Actions OIDC
+- `DB_PASSWORD`: Database password
+- `GH_ACCESS_TOKEN`: GitHub personal access token for Amplify
+- `ACM_CERTIFICATE_ARN`: ARN of your SSL certificate
+- `ALARM_EMAIL`: Email for CloudWatch alarms
+
+### CI/CD Pipeline
+
+The project uses GitHub Actions for CI/CD:
+
+- **CI Pipeline** (`ci.yml`): Runs on every PR
+  - Lints backend (Black, Flake8)
+  - Lints frontend (ESLint, TypeScript)
+  - Builds Docker images
+  - Runs tests
+
+- **CD Pipeline** (`cd-production.yml`): Runs on merge to `main`
+  - Builds and pushes Docker images to ECR
+  - Applies Terraform changes
+  - Deploys to ECS Fargate
+  - Triggers Amplify build for frontend
+
+## 🔒 Security & Compliance
+
+The infrastructure follows AWS Well-Architected Framework and SOC2 best practices:
+
+- **Encryption**: Data encrypted at rest (KMS) and in transit (TLS)
+- **Network Security**: VPC with public/private subnets, security groups, WAF
+- **Access Control**: IAM roles with least privilege, Secrets Manager
+- **Monitoring**: CloudWatch logs, metrics, and alarms
+- **Audit**: CloudTrail logging, VPC Flow Logs, ALB access logs
+- **High Availability**: Multi-AZ RDS, auto-scaling ECS tasks
+- **DDoS Protection**: AWS Shield, WAF rate limiting
+
+## 📊 Monitoring
+
+### CloudWatch Dashboard
+
+Access the CloudWatch dashboard to monitor:
+- ECS CPU and memory utilization
+- ALB response times and error rates
+- RDS performance metrics
+- Custom application metrics
+
+### Alarms
+
+Email notifications are sent for:
+- High CPU/memory usage
+- Unhealthy targets
+- 5XX errors
+- RDS connection issues
+- Low storage space
+
+## 🛠️ Tech Stack
+
+### Frontend
+- Next.js 15 (App Router)
+- React 19
+- TypeScript
+- TailwindCSS
+- React Hook Form
+- Zod validation
+- Lucide icons
+
+### Backend
+- FastAPI
+- Python 3.11
+- SQLAlchemy 2.0 (async)
+- Pydantic v2
+- Alembic
+- PostgreSQL 16
+
+### Infrastructure
+- AWS ECS Fargate
+- AWS RDS PostgreSQL
+- AWS Amplify
+- AWS ALB
+- AWS WAF
+- AWS Secrets Manager
+- AWS CloudWatch
+- Terraform
+
+## 📝 API Documentation
+
+Once the backend is running, visit:
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
+
+## 🧪 Testing
+
+### Backend Tests
+```bash
+cd backend
+pytest
+```
+
+### Frontend Tests
+```bash
+cd frontend
+npm test
+```
+
+## 🤝 Contributing
+
+**Important**: This is proprietary software. All contributors must sign a Contributor License Agreement (CLA) before their contributions can be accepted.
+
+For detailed contributing guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+Quick start:
+1. Sign the CLA (contact legal@nirvahatech.com)
+2. Create a feature branch from `develop`
+3. Make your changes following our coding standards
+4. Run linting and tests
+5. Submit a pull request to `develop`
+
+## 📄 License
+
+Copyright (c) 2024 Nirvahatech. All rights reserved.
+
+This software is proprietary and confidential. Unauthorized copying, distribution, or use of this software, via any medium, is strictly prohibited. See the [LICENSE](LICENSE) file for details.
+
+## 📧 Support
+
+For support, email support@nirvahatech.com or create an issue in the repository.
+

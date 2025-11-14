@@ -1,0 +1,14 @@
+node_modules
+.next
+__pycache__
+*.pyc
+.env
+.env.local
+.git
+.github
+deployment
+*.md
+docker-compose*.yml
+Dockerfile
+.history
+
