@@ -1,4 +1,4 @@
-import { Activity, DollarSign, Shield } from "lucide-react";
+import { DollarSign, Shield } from "lucide-react";
 
 export function About() {
   return (
@@ -76,7 +76,6 @@ export function About() {
               </p>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-              <Activity className="mb-3" size={32} />
               <h4 className="font-semibold mb-2">Implement Fast</h4>
               <p className="text-sm opacity-90">
                 Battle-tested frameworks. Quick wins. Lasting results.
