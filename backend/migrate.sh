@@ -26,21 +26,14 @@ if [ "$ENV" = "production" ] || [ "$ENV" = "prod" ]; then
     echo -e "${YELLOW}⚠️  Running migrations for PRODUCTION${NC}\n"
     
     # Check for production database URL
-    if [ -z "$POSTGRES_SERVER" ] || [ -z "$POSTGRES_USER" ] || [ -z "$POSTGRES_PASSWORD" ] || [ -z "$POSTGRES_DB" ]; then
+    if [ -z "$DATABASE_URL" ]; then
         echo -e "${RED}Error: Production database credentials not found!${NC}"
         echo ""
-        echo "Please set the following environment variables:"
-        echo "  - POSTGRES_SERVER (e.g., your-db.postgres.database.azure.com)"
-        echo "  - POSTGRES_USER"
-        echo "  - POSTGRES_PASSWORD"
-        echo "  - POSTGRES_DB"
-        echo ""
-        echo "Or set DATABASE_URL directly:"
+        echo "Set DATABASE_URL directly:"
         echo "  export DATABASE_URL='postgresql+asyncpg://user:pass@host:5432/dbname'"
         exit 1
     fi
     
-    echo "Database: $POSTGRES_SERVER/$POSTGRES_DB"
     echo ""
     read -p "Are you sure you want to continue? (yes/no) " -r
     echo
