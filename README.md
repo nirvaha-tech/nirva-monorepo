@@ -138,7 +138,37 @@ alembic upgrade head
 alembic downgrade -1
 ```
 
-## 🌐 AWS Deployment
+## 🌐 Deployment Options
+
+### Option 1: Vercel + Railway (Recommended for MVP)
+
+**Perfect for:**
+- Quick MVP deployment
+- Development and staging
+- Small to medium traffic
+- Cost-effective solution ($0-40/month)
+
+**Quick Start:**
+1. Follow the [Quick Deploy Guide](QUICK_DEPLOY_VERCEL.md)
+2. Or use the deployment script: `./deploy-to-vercel.sh`
+3. See [Full Vercel Guide](VERCEL_DEPLOYMENT.md) for detailed instructions
+
+**What you get:**
+- ✅ Global CDN (Vercel)
+- ✅ Auto-scaling
+- ✅ HTTPS included
+- ✅ GitHub integration
+- ✅ Free tier available
+- ✅ 5-minute deployment
+
+### Option 2: AWS Deployment (Enterprise Grade)
+
+**Perfect for:**
+- Production enterprise workloads
+- SOC2 compliance requirements
+- High availability and scalability
+- Advanced security requirements
+- Custom infrastructure needs
 
 ### Prerequisites
 
