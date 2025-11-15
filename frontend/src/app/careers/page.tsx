@@ -17,7 +17,7 @@ export default function CareersPage() {
     {
       title: "Cloud Solutions Architect",
       team: "Engineering",
-      location: "Remote / New York",
+      location: "Remote / San Francisco",
       type: "Full-time",
       description: "Design and implement scalable cloud solutions",
     },
@@ -31,21 +31,21 @@ export default function CareersPage() {
     {
       title: "Kubernetes Specialist",
       team: "Engineering",
-      location: "Remote / London",
+      location: "Remote / Tel Aviv",
       type: "Full-time",
       description: "Manage and optimize Kubernetes clusters",
     },
     {
       title: "FinOps Analyst",
       team: "Operations",
-      location: "Remote / Berlin",
+      location: "Remote / San Francisco",
       type: "Full-time",
       description: "Optimize cloud costs and financial operations",
     },
     {
       title: "DevOps Intern",
       team: "Engineering",
-      location: "Remote",
+      location: "Remote / Tel Aviv",
       type: "Internship",
       description: "Learn and contribute to DevOps practices",
     },
