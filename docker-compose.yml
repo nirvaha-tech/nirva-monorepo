@@ -43,6 +43,9 @@ services:
         condition: service_healthy
     networks:
       - nirvahatech-network
+    # volumes:
+    #   - ./backend:/app  # Disabled for production - use Dockerfile's built-in code
+    # command: .venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload  # Use Dockerfile CMD instead
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=5)"]
       interval: 30s

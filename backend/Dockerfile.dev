@@ -39,6 +39,18 @@ EXPOSE 8000
 # Set PATH to use Poetry's virtual environment
 ENV PATH="/app/.venv/bin:$PATH"
 
+# Create a startup script in /usr/local/bin (won't be overridden by volume)
+RUN echo '#!/bin/bash\n\
+set -e\n\
+cd /app\n\
+# Always ensure dependencies are installed (fast with Poetry cache)\n\
+echo "Ensuring dependencies are installed..."\n\
+poetry install --no-root\n\
+# Run uvicorn with Poetry\n\
+echo "Starting FastAPI server with hot-reload on port 8000..."\n\
+exec poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload\n\
+' > /usr/local/bin/entrypoint.sh && chmod +x /usr/local/bin/entrypoint.sh
+
 # Development server with hot-reload
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["/usr/local/bin/entrypoint.sh"]
 

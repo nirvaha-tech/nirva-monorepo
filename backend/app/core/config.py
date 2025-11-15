@@ -1,16 +1,8 @@
 """
 Application configuration
 """
-from typing import List, Union, Annotated
+from typing import List
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import BeforeValidator
-
-
-def parse_cors(v: Union[str, List[str]]) -> List[str]:
-    """Parse CORS origins from string or list"""
-    if isinstance(v, str):
-        return [i.strip() for i in v.split(",") if i.strip()]
-    return v if isinstance(v, list) else []
 
 
 class Settings(BaseSettings):
@@ -43,11 +35,14 @@ class Settings(BaseSettings):
             f"@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
         )
     
-    # CORS
-    BACKEND_CORS_ORIGINS: Annotated[
-        List[str],
-        BeforeValidator(parse_cors)
-    ] = ["http://localhost:3000", "http://localhost:8000", "http://frontend:3000"]
+    # CORS - accepts either comma-separated string or already parsed list
+    BACKEND_CORS_ORIGINS: str = "http://localhost:3000,http://localhost:8000,http://frontend:3000"
+    
+    def get_cors_origins(self) -> List[str]:
+        """Parse CORS origins from comma-separated string"""
+        if isinstance(self.BACKEND_CORS_ORIGINS, str):
+            return [origin.strip() for origin in self.BACKEND_CORS_ORIGINS.split(",") if origin.strip()]
+        return []
     
     # Email settings (for future notifications)
     SMTP_HOST: str = ""

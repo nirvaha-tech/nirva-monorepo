@@ -31,7 +31,6 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: nirvahatech
-      BACKEND_CORS_ORIGINS: http://localhost:3000
       PYTHONUNBUFFERED: 1
     ports:
       - "8000:8000"
@@ -45,7 +44,6 @@ services:
       - ./backend:/app
       # Persist Poetry cache between rebuilds
       - poetry-cache:/tmp/poetry_cache
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
 networks:
   nirvahatech-dev-network:
