@@ -1,0 +1,88 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Poetry
+.poetry/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Logs
+*.log
+logs/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Alembic (keep for migrations)
+# alembic/versions/*.pyc
+
+# Deployment
+deployment/
+scripts/
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Testing and utilities
+tests/
+check_db_schema.py
+create_tables.py
+test_db_insert.py
+run_migrations.py
+
+# Misc
+*.backup
+.pre-commit-config.yaml
+Makefile
+setup.py
+setup.cfg
+MANIFEST.in
+
