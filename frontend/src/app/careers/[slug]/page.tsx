@@ -4,7 +4,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { motion } from "framer-motion";
 import { MapPin, Briefcase, ArrowRight, Upload, ArrowLeft } from "lucide-react";
-import { useState } from "react";
+import { useState, use } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -239,7 +239,8 @@ const jobsData: Record<string, any> = {
   }
 };
 
-export default function JobDetailPage({ params }: { params: { slug: string } }) {
+export default function JobDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = use(params);
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
@@ -254,7 +255,7 @@ export default function JobDetailPage({ params }: { params: { slug: string } }) 
     resolver: zodResolver(applicationSchema),
   });
 
-  const job = jobsData[params.slug];
+  const job = jobsData[slug];
 
   if (!job) {
     return (
